@@ -3,11 +3,42 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <time.h>
+#include <stdint.h>
+#include <windows.h>
+
+
 
 
 void prompt() {
     printf("prompt$: ");
 }
+
+
+void cmatrix() {
+    while (1) {
+        // Clear screen
+        printf("\033[2J");
+
+        // Seed the random number generator with current time
+        srand(time(NULL));
+
+        // Generate matrix-like output
+        for (int i = 0; i < 25; i++) {
+            for (int j = 0; j < 200; j++) {
+                if (rand() % 20 == 0) // Randomly print characters
+                    printf("%c", rand() % 94 + 33); // No color
+                else
+                    printf(" "); // Empty space
+            }
+            printf("\n");
+        }
+
+        fflush(stdout);
+        usleep(100000); // Wait for 100 milliseconds before updating again
+    }
+}
+
 
 static void wc(char* fileName, int countLines, int countWords, int countChars){
     int lineCount = 0;
@@ -127,6 +158,10 @@ void parseInput(char *input) {
             } else {
                 printf("Usage: grep <pattern> <filename>\n");
             }
+        } else if (strcmp(command, "cmatrix") == 0){
+            cmatrix();
+        } else if (strcmp(command, "df") == 0){
+            // fali df
         } else {
             printf("Command not found: %s\n", command);
         }
@@ -135,12 +170,16 @@ void parseInput(char *input) {
 
 
 int main() {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    SetConsoleTextAttribute(hConsole,
+                            FOREGROUND_RED);
     while(1){
-        char input[150];
+        char input[200];
         prompt();
         fgets(input, sizeof(input), stdin);
         parseInput(input);
     }
-    return 0; // Indicate successful termination
+    return 0;
 }
 
