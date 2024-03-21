@@ -7,13 +7,117 @@
 #include <stdint.h>
 #include <windows.h>
 
-
-
-
 void prompt() {
     printf("prompt$: ");
 }
 
+void tiger() {
+    char asciiArt[14][60] = {
+            "                    __,,,,_",
+            "       _ __..-;''`--/'/ /.',-`-.",
+            "   (`/' ` |  \\ \\ \\ \\ / / / / .-'/`,_",
+            "  /'`\\ \\   |  \\ | \\| // // / -.,/_,'-,",
+            " /<7' ;  \\ \\  | ; ||/ /| | \\/    |`-/,/-.,_,/')",
+            "/  _.-, `,-\\,__|  _-| / \\ \\/|_/  |    '-/.;.'\\'",
+            "`-`  f/ ;      / __/ \\__ `/ |__/ |",
+            "     `-'      |  -| =|\\_  \\  |-' |",
+            "           __/   /_..-' `  ),'  //",
+            "       fL ((__.-'((___..-'' \\__.'"
+    };
+
+    for (int i = 0; i < 10; ++i) {
+        printf("%s\n", asciiArt[i]);
+    }
+}
+
+void pokemon() {
+    printf("                                  ,'\\\n");
+    printf("    _.----.        ____         ,'  _\\   ___    ___     ____\n");
+    printf(" _,-'       `.     |    |  /`.   \\,-'    |   \\  /   |   |    \\  |`.\n");
+    printf("\\      __    \\    '-.  | /   `.  ___    |    \\/    |   '-.   \\ |  |\n");
+    printf(" \\.    \\ \\   |  __  |  |/    ,','_  `.  |          | __  |    \\|  |\n");
+    printf("   \\    \\/   /,' _`.|      ,' / / / /   |          ,' _`.|     |  |\n");
+    printf("    \\     ,'-'/  /   \\    ,'   | \\/ / ,`.|         /  /   \\  |     |\n");
+    printf("     \\    \\ |   \\_/  |   `-.  \\    `'  /|  |    ||   \\_/  | |\\    |\n");
+    printf("      \\    \\ \\      /       `-.`.___,-' |  |\\  /| \\      /  | |   |\n");
+    printf("       \\    \\ `.__,'|  |`-._    `|      |__| \\/ |  `.__,'|  | |   |\n");
+    printf("        \\_.-'       |__|    `-._ |              '-.|     '-.| |   |\n");
+    printf("                                `'                            '-._|\n");
+    printf("               _,........__\n");
+    printf("            ,-'            \"`-.\n");
+    printf("          ,'                   `-. \n");
+    printf("        ,'                        \\\n");
+    printf("      ,'                           .\n");
+    printf("      .\\               ,\"\".       `\n");
+    printf("     ._.'|             / |  `       \\\n");
+    printf("     |   |            `-.'  ||       `.\n");
+    printf("     |   |            '-._,'||       | \\\n");
+    printf("     .`.,'             `..,'.'       , |`-.\n");
+    printf("     l                       .'`.  _/  |   `.\n");
+    printf("     `-.._'-   ,          _ _'   -\" \\  .     `\n");
+    printf("`.\"\"\"\"\"'-.`-...,---------','         `. `....__.\n");
+    printf(".'        `\"-..___      __,'\\          \\  \\     \\\n");
+    printf("\\_ .          |   `\"\"\"'    `.           . \\     \\\n");
+    printf("  `.          |              `.          |  .     L\n");
+    printf("    `.        |`--...________.'.        j   |     |\n");
+    printf("      `._    .'      |          `.     .|   ,     |\n");
+    printf("         `--,\\       .            `7\"' |  ,      |\n");
+    printf("            ` `      `            /     |  |      |    _,-'\"\"`-.\n");
+    printf("             \\ `.     .          /      |  '      |  ,'          `.\n");
+    printf("              \\  v.__  .        '       .   \\    /| /              \\\n");
+    printf("               \\/    `\"\"\"\"\"\"\"\"`.       \\   \\  /.''                |\n");
+    printf("                `        .        `._ ___,j.  `/ .-       ,---.     |\n");
+    printf("                 ,`-.      \\         .\"     `.  |/        j     `    |\n");
+    printf("                /    `.     \\       /         \\ /         |     /    j\n");
+    printf("               |       `-.   7-.._ .          |\"          '         /\n");
+    printf("               |          `./_    `|          |            .     _,\n");
+    printf("               `.           / `----|          |-............`---'\n");
+    printf("                 \\          \\      |          |\n");
+    printf("                ,'           )     `.         |\n");
+    printf("                 7____,,..--'      /          |\n");
+    printf("                                  `---.__,--.'\n");
+}
+
+void thirsty() {
+    printf("                   o           o\n");
+    printf("                      o   o\n");
+    printf("                         o         o\n");
+    printf("\n");
+    printf("                     o       o  o\n");
+    printf("                  ________._____________\n");
+    printf("                  |   .                |\n");
+    printf("                  |^^^.^^^^^.^^^^^^.^^^|\n");
+    printf("                  |     .   .   .      |\n");
+    printf("                   \\      . . . .     /\n");
+    printf("C H E E R S !!!      \\     .  .     / \n");
+    printf("                       \\    ..    / \n");
+    printf("                         \\      / \n");
+    printf("                           \\  / \n");
+    printf("                            \\/ \n");
+    printf("                            ||\n");
+    printf("                            ||\n");
+    printf("                            ||\n");
+    printf("                            ||\n");
+    printf("                            ||\n");
+    printf("                            /\\\n");
+    printf("                           /;;\\\n");
+    printf("                      ==============\n");
+}
+
+void df(const char *drive) {
+    ULARGE_INTEGER total_bytes;
+    ULARGE_INTEGER free_bytes;
+
+    if (GetDiskFreeSpaceEx(drive, NULL, &total_bytes, &free_bytes)) {
+        printf("Drive %s:\n", drive);
+        printf("Total space: %llu bytes\n", total_bytes.QuadPart);
+        printf("Free space : %llu bytes\n", free_bytes.QuadPart);
+        printf("Used space : %llu bytes\n", total_bytes.QuadPart - free_bytes.QuadPart);
+        printf("Usage      : %.2f%%\n", ((double)(total_bytes.QuadPart - free_bytes.QuadPart) / total_bytes.QuadPart) * 100);
+    } else {
+        printf("Error getting disk space information for drive %s\n", drive);
+    }
+}
 
 void cmatrix() {
     while (1) {
@@ -35,12 +139,11 @@ void cmatrix() {
         }
 
         fflush(stdout);
-        usleep(100000); // Wait for 100 milliseconds before updating again
+        usleep(50000); // Wait for 50 milliseconds before updating again
     }
 }
 
-
-static void wc(char* fileName, int countLines, int countWords, int countChars){
+void wc(char* fileName, int countLines, int countWords, int countChars){
     int lineCount = 0;
     int wordCount = 0;
     int characterCount = 0;
@@ -105,6 +208,25 @@ void grep(char* pattern, char* fileName) {
     fclose(file);
 }
 
+void pwgen(int length) {
+    // Define character set for password generation
+    char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+
+    // Calculate the size of the character set
+    int charset_size = sizeof(charset) - 1;
+
+    // Seed the random number generator
+    srand((unsigned int)time(NULL));
+
+    // Generate and print the password
+    printf("Generated Password: ");
+    for (int i = 0; i < length; ++i) {
+        int index = rand() % charset_size;
+        printf("%c", charset[index]);
+    }
+    printf("\n");
+}
+
 
 void parseInput(char *input) {
     // Tokenization
@@ -116,9 +238,6 @@ void parseInput(char *input) {
     // Subsequent tokens are arguments
     while (token != NULL) {
         token = strtok(NULL, " \n"); // Get next token
-        if (token != NULL) {
-            printf("%s\n", token); // Print arguments
-        }
 
         if (strcmp(command, "wc") == 0) {
             // Parse options and filename for wc command
@@ -149,7 +268,6 @@ void parseInput(char *input) {
                 printf("Usage: wc [-l] [-w] [-c] <filename>\n");
             }
         } else if (strcmp(command, "grep") == 0) {
-            // Implementation for grep command already exists
             char *pattern = token;
             token = strtok(NULL, " \n");
             if (token != NULL) {
@@ -161,7 +279,23 @@ void parseInput(char *input) {
         } else if (strcmp(command, "cmatrix") == 0){
             cmatrix();
         } else if (strcmp(command, "df") == 0){
-            // fali df
+            df("C:\\");
+        } else if (strcmp(command, "tiger") == 0){
+            tiger();
+        } else if (strcmp(command, "pokemon") == 0){
+            pokemon();
+        } else if (strcmp(command, "thirsty") == 0){
+            thirsty();
+        } else if (strcmp(command, "pwgen") == 0){
+            int length;
+            if(token != NULL){
+                if(atoi(token)){
+                    length = atoi(token);
+                    pwgen(length);
+                } else{
+                    printf("You have to enter a integer as a password length!\n");
+                }
+            }
         } else {
             printf("Command not found: %s\n", command);
         }
@@ -170,10 +304,11 @@ void parseInput(char *input) {
 
 
 int main() {
+    //system("color 1F"); // Change the console background to blue (1) and text to white (F)
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    SetConsoleTextAttribute(hConsole,
-                            FOREGROUND_RED);
+    // Set text color to red
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
     while(1){
         char input[200];
         prompt();
