@@ -6,6 +6,30 @@
 #include <time.h>
 #include <stdint.h>
 #include <windows.h>
+#include <fcntl.h>
+
+void handleOutputRedirection(char *input) {
+    char *redirect_symbol = strchr(input, '>');
+    if (redirect_symbol != NULL) {
+        // Extract the filename for redirection
+        *redirect_symbol = '\0'; // Replace '>' with NULL character
+        char *filename = redirect_symbol + 1; // Filename starts right after '>'
+        // Trim leading and trailing spaces from filename
+        while (isspace(*filename)) {
+            filename++;
+        }
+        int len = strlen(filename);
+        while (len > 0 && isspace(filename[len - 1])) {
+            filename[--len] = '\0';
+        }
+
+
+        // Redirect output to the specified file
+        freopen(filename, "w", stdout);
+        fflush(stdout);
+    }
+}
+
 
 void prompt() {
     printf("prompt$: ");
@@ -153,7 +177,7 @@ void wc(char* fileName, int countLines, int countWords, int countChars){
     FILE *file = fopen(fileName, "r");
 
     if(file == NULL){
-        printf("Error: Unable to read file!");
+        printf("Error: Unable to read file!\n");
         return;
     }
 
@@ -264,6 +288,7 @@ void parseInput(char *input) {
             if (fileName != NULL) {
                 // Call wc function with parsed arguments
                 wc(fileName, countLines, countWords, countChars);
+                break;  // to avoid redundant else print function
             } else {
                 printf("Usage: wc [-l] [-w] [-c] <filename>\n");
             }
@@ -273,28 +298,32 @@ void parseInput(char *input) {
             if (token != NULL) {
                 char *fileName = token;
                 grep(pattern, fileName);
+                break;  // to avoid redundant else print function
             } else {
                 printf("Usage: grep <pattern> <filename>\n");
             }
         } else if (strcmp(command, "cmatrix") == 0){
             cmatrix();
-        } else if (strcmp(command, "df") == 0){
+        } else if (strcmp(command, "df") == 0){  // df implementation
             df("C:\\");
-        } else if (strcmp(command, "tiger") == 0){
+        } else if (strcmp(command, "tiger") == 0){ // tiger implementation
             tiger();
-        } else if (strcmp(command, "pokemon") == 0){
+        } else if (strcmp(command, "pokemon") == 0){  // pokemon implementation
             pokemon();
-        } else if (strcmp(command, "thirsty") == 0){
+        } else if (strcmp(command, "thirsty") == 0){  // thirsty implementation
             thirsty();
-        } else if (strcmp(command, "pwgen") == 0){
+        } else if (strcmp(command, "pwgen") == 0){  // password generator implementation
             int length;
             if(token != NULL){
                 if(atoi(token)){
                     length = atoi(token);
                     pwgen(length);
+                    break;  // to avoid redundant else print function
                 } else{
                     printf("You have to enter a integer as a password length!\n");
                 }
+            } else {
+                printf("Usage: pwgen <length>\n");
             }
         } else {
             printf("Command not found: %s\n", command);
@@ -313,8 +342,11 @@ int main() {
         char input[200];
         prompt();
         fgets(input, sizeof(input), stdin);
+        handleOutputRedirection(input);
         parseInput(input);
+        fflush(stdout);
     }
+
     return 0;
 }
 
