@@ -327,7 +327,7 @@ void parseInput2(char *input) {
         } else if (strcmp(command, "cmatrix") == 0){
             cmatrix2();
         } else if (strcmp(command, "df") == 0){  // df implementation
-            df2("C:\\");
+            df2("/");
         } else if (strcmp(command, "tiger") == 0){ // tiger implementation
             tiger2();
         } else if (strcmp(command, "pokemon") == 0){  // pokemon implementation
@@ -354,7 +354,7 @@ void parseInput2(char *input) {
 }
 
 
-int main2() {
+int main() {
     while(1){
         char input[200];
         prompt2();
@@ -363,7 +363,6 @@ int main2() {
         parseInput2(input);
         fflush(stdout);
     }
-
     return 0;
 }
 

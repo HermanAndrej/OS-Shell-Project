@@ -331,7 +331,7 @@ void parseInput(char *input) {
 }
 
 
-int main() {
+int main2() {
     //system("color 1F"); // Change the console background to blue (1) and text to white (F)
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
