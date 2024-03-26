@@ -34,7 +34,17 @@ void handleOutputRedirection2(char *input) {
 }
 
 void prompt2() {
-    printf("prompt$: ");
+    char hostname[256];
+    char *username;
+
+    // Get the machine name
+    gethostname(hostname, sizeof(hostname));
+
+    // Get the username
+    username = getlogin();
+
+    // Print the prompt
+    printf("%s@%s:~$ ", username, hostname);
 }
 
 void tiger2() {
