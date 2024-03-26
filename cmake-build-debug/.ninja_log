@@ -1,12 +1,8 @@
 # ninja log v5
-6	3255	7330880848331221	CMakeFiles/untitled.dir/main.c.obj	90461b31333bbf23
-3256	3865	7330880854361531	untitled.exe	719df6d4295c7d07
-7	1907	7330892824349214	CMakeFiles/untitled.dir/independent.c.obj	b6874ce9eca6e06a
-2	370	7330894063275791	build.ninja	5a186430d91fb94a
-6	1900	7330894084088361	CMakeFiles/untitled.dir/independent/independent.c.obj	41ae69fb4eb1ecd4
-7	1984	7330895232966492	CMakeFiles/untitled.dir/independent/independent.c.obj	41ae69fb4eb1ecd4
-6	1825	7330895474514516	CMakeFiles/untitled.dir/independent/independent.c.obj	41ae69fb4eb1ecd4
-1827	2087	7330895477033058	untitled.exe	c8c0e58429d0337f
-10	2368	7331007638839323	CMakeFiles/untitled.dir/independent/independent.c.obj	41ae69fb4eb1ecd4
 3	2370	7331007638849326	CMakeFiles/untitled.dir/main.c.obj	90461b31333bbf23
 2370	2586	7331007640939517	untitled.exe	c8c0e58429d0337f
+7	1907	7330892824349214	CMakeFiles/untitled.dir/independent.c.obj	b6874ce9eca6e06a
+2	370	7331008927682499	build.ninja	5a186430d91fb94a
+10	2368	7331007638839323	CMakeFiles/untitled.dir/independent/independent.c.obj	41ae69fb4eb1ecd4
+3	812	7331009036985246	CMakeFiles/untitled.dir/independent/independent.c.obj	41ae69fb4eb1ecd4
+813	912	7331009037937300	untitled.exe	c8c0e58429d0337f

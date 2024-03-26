@@ -273,8 +273,7 @@ void pwgen2(int length) {
     printf("\n");
 }
 
-
-void parseInput2(char *input) {
+/* void parseInput2(char *input) {
     // Tokenization
     char *token = strtok(input, " \n"); // Break input into tokens separated by space or newline
 
@@ -349,6 +348,187 @@ void parseInput2(char *input) {
             }
         } else {
             printf("Command not found: %s\n", command);
+        }
+    }
+}
+ */
+
+void parseInput2(char *input) {
+    // Tokenization
+    char *token = strtok(input, " \n"); // Break input into tokens separated by space or newline
+
+    // First token is the command
+    char *command = token;
+
+    // Subsequent tokens are arguments
+    while (token != NULL) {
+        token = strtok(NULL, " \n"); // Get next token
+
+        if (strcmp(command, "wc") == 0) {
+            // Parse options and filename for wc command
+            int countLines = 0;
+            int countWords = 0;
+            int countChars = 0;
+            char *fileName = NULL;
+
+            while (token != NULL) {
+                if (strcmp(token, "-l") == 0) {
+                    countLines = 1;
+                } else if (strcmp(token, "-w") == 0) {
+                    countWords = 1;
+                } else if (strcmp(token, "-c") == 0) {
+                    countChars = 1;
+                } else {
+                    // Assume this token is the filename
+                    fileName = token;
+                    break;
+                }
+                token = strtok(NULL, " \n"); // Move to the next token
+            }
+
+            if (fileName != NULL) {
+                // Fork to execute wc command
+                pid_t pid = fork();
+                if (pid == 0) {
+                    // Child process
+                    wc2(fileName, countLines, countWords, countChars);
+                    exit(EXIT_SUCCESS); // Exit child process
+                } else if (pid < 0) {
+                    // Fork failed
+                    perror("fork");
+                } else {
+                    // Parent process
+                    waitpid(pid, NULL, 0); // Wait for child process to finish
+                }
+                break;  // Exit while loop
+            } else {
+                printf("Usage: wc [-l] [-w] [-c] <filename>\n");
+            }
+        } else if (strcmp(command, "grep") == 0) {
+            char *pattern = token;
+            token = strtok(NULL, " \n");
+            if (token != NULL) {
+                char *fileName = token;
+                // Fork to execute grep command
+                pid_t pid = fork();
+                if (pid == 0) {
+                    // Child process
+                    grep2(pattern, fileName);
+                    exit(EXIT_SUCCESS); // Exit child process
+                } else if (pid < 0) {
+                    // Fork failed
+                    perror("fork");
+                } else {
+                    // Parent process
+                    waitpid(pid, NULL, 0); // Wait for child process to finish
+                }
+                break;  // Exit while loop
+            } else {
+                printf("Usage: grep <pattern> <filename>\n");
+            }
+        } else if (strcmp(command, "cmatrix") == 0) {
+            // Fork to execute cmatrix command
+            pid_t pid = fork();
+            if (pid == 0) {
+                // Child process
+                cmatrix2();
+                exit(EXIT_SUCCESS); // Exit child process
+            } else if (pid < 0) {
+                // Fork failed
+                perror("fork");
+            } else {
+                // Parent process
+                waitpid(pid, NULL, 0); // Wait for child process to finish
+            }
+            break;  // Exit while loop
+        } else if (strcmp(command, "df") == 0) {
+            // Fork to execute df command
+            pid_t pid = fork();
+            if (pid == 0) {
+                // Child process
+                df2("/");
+                exit(EXIT_SUCCESS); // Exit child process
+            } else if (pid < 0) {
+                // Fork failed
+                perror("fork");
+            } else {
+                // Parent process
+                waitpid(pid, NULL, 0); // Wait for child process to finish
+            }
+            break;  // Exit while loop
+        } else if (strcmp(command, "tiger") == 0) {
+            // Fork to execute tiger command
+            pid_t pid = fork();
+            if (pid == 0) {
+                // Child process
+                tiger2();
+                exit(EXIT_SUCCESS); // Exit child process
+            } else if (pid < 0) {
+                // Fork failed
+                perror("fork");
+            } else {
+                // Parent process
+                waitpid(pid, NULL, 0); // Wait for child process to finish
+            }
+            break;  // Exit while loop
+        } else if (strcmp(command, "pokemon") == 0) {
+            // Fork to execute pokemon command
+            pid_t pid = fork();
+            if (pid == 0) {
+                // Child process
+                pokemon2();
+                exit(EXIT_SUCCESS); // Exit child process
+            } else if (pid < 0) {
+                // Fork failed
+                perror("fork");
+            } else {
+                // Parent process
+                waitpid(pid, NULL, 0); // Wait for child process to finish
+            }
+            break;  // Exit while loop
+        } else if (strcmp(command, "thirsty") == 0) {
+            // Fork to execute thirsty command
+            pid_t pid = fork();
+            if (pid == 0) {
+                // Child process
+                thirsty2();
+                exit(EXIT_SUCCESS); // Exit child process
+            } else if (pid < 0) {
+                // Fork failed
+                perror("fork");
+            } else {
+                // Parent process
+                waitpid(pid, NULL, 0); // Wait for child process to finish
+            }
+            break;  // Exit while loop
+        } else if (strcmp(command, "pwgen") == 0) {
+            int length;
+            if (token != NULL) {
+                if (atoi(token)) {
+                    length = atoi(token);
+                    // Fork to execute pwgen command
+                    pid_t pid = fork();
+                    if (pid == 0) {
+                        // Child process
+                        pwgen2(length);
+                        exit(EXIT_SUCCESS); // Exit child process
+                    } else if (pid < 0) {
+                        // Fork failed
+                        perror("fork");
+                    } else {
+                        // Parent process
+                        waitpid(pid, NULL, 0); // Wait for child process to finish
+                    }
+                    break;  // Exit while loop
+                } else {
+                    printf("You have to enter an integer as a password length!\n");
+                }
+            } else {
+                printf("Usage: pwgen <length>\n");
+            }
+        } else {
+            printf("Command not found: %s\n", command);
+            break; // Exit while loop
         }
     }
 }
