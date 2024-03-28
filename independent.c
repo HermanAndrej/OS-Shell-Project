@@ -5,13 +5,19 @@
 #include <ctype.h>
 #include <time.h>
 #include <stdint.h>
+#include <errno.h>
+#include <dirent.h>
+#include <sys/wait.h>
 #ifdef _WIN32
 #include <windows.h>
 #else
 #include <unistd.h> // For Unix-like systems
 #endif
 
-void handleOutputRedirection2(char *input) {
+#define ANSI_BG_MAGENTA    "\x1b[45m" // background
+#define ANSI_COLOR_RED     "\x1b[31m" // text
+
+void handleOutputRedirection(char *input) {
     char *redirect_symbol = strchr(input, '>');
     if (redirect_symbol != NULL) {
         // Extract the filename for redirection
@@ -55,9 +61,11 @@ void help() {
     printf("   Usage: help\n");
 }
 
-void prompt2() {
+void prompt() {
     char hostname[256];
     char *username;
+
+    printf(ANSI_COLOR_RED);
 
     // Get the machine name
     gethostname(hostname, sizeof(hostname));
@@ -69,7 +77,25 @@ void prompt2() {
     printf("%s@%s:~$ ", username, hostname);
 }
 
-void tiger2() {
+void ls(const char *path) {
+    DIR *dir;
+    struct dirent *entry;
+
+    dir = opendir(path);
+    if (dir == NULL) {
+        fprintf(stderr, "ls: cannot open directory '%s'\n", path);
+        return;
+    }
+
+    printf("Listing of directory: %s\n", path);
+    while ((entry = readdir(dir)) != NULL) {
+        printf("%s\n", entry->d_name);
+    }
+
+    closedir(dir);
+}
+
+void tiger() {
     char asciiArt[14][60] = {
             "                    __,,,,_",
             "       _ __..-;''`--/'/ /.',-`-.",
@@ -88,7 +114,7 @@ void tiger2() {
     }
 }
 
-void pokemon2() {
+void pokemon() {
     printf("                                  ,'\\\n");
     printf("    _.----.        ____         ,'  _\\   ___    ___     ____\n");
     printf(" _,-'       `.     |    |  /`.   \\,-'    |   \\  /   |   |    \\  |`.\n");
@@ -136,7 +162,7 @@ void pokemon2() {
     printf("                                  `---.__,--.'\n");
 }
 
-void thirsty2() {
+void thirsty() {
     printf("                   o           o\n");
     printf("                      o   o\n");
     printf("                         o         o\n");
@@ -162,7 +188,7 @@ void thirsty2() {
     printf("                      ==============\n");
 }
 
-void df2(const char *drive) {
+void df(const char *drive) {
 
 #ifdef __unix__
     char command[100];
@@ -197,7 +223,7 @@ void df2(const char *drive) {
 #endif
 }
 
-void cmatrix2() {
+void cmatrix() {
     while (1) {
         // Clear screen
         printf("\033[2J");
@@ -221,7 +247,7 @@ void cmatrix2() {
     }
 }
 
-void wc2(char* fileName, int countLines, int countWords, int countChars){
+void wc(char* fileName, int countLines, int countWords, int countChars){
     int lineCount = 0;
     int wordCount = 0;
     int characterCount = 0;
@@ -269,7 +295,7 @@ void wc2(char* fileName, int countLines, int countWords, int countChars){
     }
 }
 
-void grep2(char* pattern, char* fileName) {
+void grep(char* pattern, char* fileName) {
     // Implement grep command logic here
     printf("Executing grep command for pattern: %s in file: %s\n", pattern, fileName);
     FILE *file = fopen(fileName, "r");
@@ -286,7 +312,7 @@ void grep2(char* pattern, char* fileName) {
     fclose(file);
 }
 
-void pwgen2(int length) {
+void pwgen(int length) {
     // Define character set for password generation
     char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
 
@@ -305,7 +331,7 @@ void pwgen2(int length) {
     printf("\n");
 }
 
-void parseInput2(char *input) {
+void parseInput(char *input) {
     // Tokenization
     char *token = strtok(input, " \n"); // Break input into tokens separated by space or newline
 
@@ -339,20 +365,9 @@ void parseInput2(char *input) {
             }
 
             if (fileName != NULL) {
-                // Fork to execute wc command
-                pid_t pid = fork();
-                if (pid == 0) {
-                    // Child process
-                    wc2(fileName, countLines, countWords, countChars);
-                    exit(EXIT_SUCCESS); // Exit child process
-                } else if (pid < 0) {
-                    // Fork failed
-                    perror("fork");
-                } else {
-                    // Parent process
-                    waitpid(pid, NULL, 0); // Wait for child process to finish
-                }
-                break;  // Exit while loop
+                // Call wc function with parsed arguments
+                wc(fileName, countLines, countWords, countChars);
+                break;  // to avoid redundant else print function
             } else {
                 printf("Usage: wc [-l] [-w] [-c] <filename>\n");
             }
@@ -361,153 +376,72 @@ void parseInput2(char *input) {
             token = strtok(NULL, " \n");
             if (token != NULL) {
                 char *fileName = token;
-                // Fork to execute grep command
-                pid_t pid = fork();
-                if (pid == 0) {
-                    // Child process
-                    grep2(pattern, fileName);
-                    exit(EXIT_SUCCESS); // Exit child process
-                } else if (pid < 0) {
-                    // Fork failed
-                    perror("fork");
-                } else {
-                    // Parent process
-                    waitpid(pid, NULL, 0); // Wait for child process to finish
-                }
-                break;  // Exit while loop
+                grep(pattern, fileName);
+                break;  // to avoid redundant else print function
             } else {
                 printf("Usage: grep <pattern> <filename>\n");
             }
-        } else if (strcmp(command, "cmatrix") == 0) {
-            // Fork to execute cmatrix command
-            pid_t pid = fork();
-            if (pid == 0) {
-                // Child process
-                cmatrix2();
-                exit(EXIT_SUCCESS); // Exit child process
-            } else if (pid < 0) {
-                // Fork failed
-                perror("fork");
-            } else {
-                // Parent process
-                waitpid(pid, NULL, 0); // Wait for child process to finish
-            }
-            break;  // Exit while loop
-        } else if (strcmp(command, "df") == 0) {
-            // Fork to execute df command
-            pid_t pid = fork();
-            if (pid == 0) {
-                // Child process
-                df2("/");
-                exit(EXIT_SUCCESS); // Exit child process
-            } else if (pid < 0) {
-                // Fork failed
-                perror("fork");
-            } else {
-                // Parent process
-                waitpid(pid, NULL, 0); // Wait for child process to finish
-            }
-            break;  // Exit while loop
-        } else if (strcmp(command, "tiger") == 0) {
-            // Fork to execute tiger command
-            pid_t pid = fork();
-            if (pid == 0) {
-                // Child process
-                tiger2();
-                exit(EXIT_SUCCESS); // Exit child process
-            } else if (pid < 0) {
-                // Fork failed
-                perror("fork");
-            } else {
-                // Parent process
-                waitpid(pid, NULL, 0); // Wait for child process to finish
-            }
-            break;  // Exit while loop
-        } else if (strcmp(command, "pokemon") == 0) {
-            // Fork to execute pokemon command
-            pid_t pid = fork();
-            if (pid == 0) {
-                // Child process
-                pokemon2();
-                exit(EXIT_SUCCESS); // Exit child process
-            } else if (pid < 0) {
-                // Fork failed
-                perror("fork");
-            } else {
-                // Parent process
-                waitpid(pid, NULL, 0); // Wait for child process to finish
-            }
-            break;  // Exit while loop
-        } else if (strcmp(command, "thirsty") == 0) {
-            // Fork to execute thirsty command
-            pid_t pid = fork();
-            if (pid == 0) {
-                // Child process
-                thirsty2();
-                exit(EXIT_SUCCESS); // Exit child process
-            } else if (pid < 0) {
-                // Fork failed
-                perror("fork");
-            } else {
-                // Parent process
-                waitpid(pid, NULL, 0); // Wait for child process to finish
-            }
-            break;  // Exit while loop
-        } else if (strcmp(command, "pwgen") == 0) {
+        } else if (strcmp(command, "cmatrix") == 0){
+            cmatrix();
+        } else if (strcmp(command, "df") == 0){
+            df("/");
+        } else if (strcmp(command, "tiger") == 0){
+            tiger();
+        } else if (strcmp(command, "pokemon") == 0){
+            pokemon();
+        } else if (strcmp(command, "thirsty") == 0){
+            thirsty();
+        } else if (strcmp(command, "pwgen") == 0){
             int length;
-            if (token != NULL) {
-                if (atoi(token)) {
+            if(token != NULL){
+                if(atoi(token)){
                     length = atoi(token);
-                    // Fork to execute pwgen command
-                    pid_t pid = fork();
-                    if (pid == 0) {
-                        // Child process
-                        pwgen2(length);
-                        exit(EXIT_SUCCESS); // Exit child process
-                    } else if (pid < 0) {
-                        // Fork failed
-                        perror("fork");
-                    } else {
-                        // Parent process
-                        waitpid(pid, NULL, 0); // Wait for child process to finish
-                    }
-                    break;  // Exit while loop
-                } else {
-                    printf("You have to enter an integer as a password length!\n");
+                    pwgen(length);
+                    break;  // to avoid redundant else print function
+                } else{
+                    printf("You have to enter a integer as a password length!\n");
                 }
             } else {
                 printf("Usage: pwgen <length>\n");
             }
-        } else if (strcmp(command, "help") == 0) {
-            // Fork to execute thirsty command
-            pid_t pid = fork();
-            if (pid == 0) {
-                // Child process
-                help();
-                exit(EXIT_SUCCESS); // Exit child process
-            } else if (pid < 0) {
-                // Fork failed
-                perror("fork");
+        } else if (strcmp(command, "help") == 0){
+            help();
+        } else if (strcmp(command, "ls") == 0) {
+            // If the command is "ls", pass the token (directory path) to the ls function
+            if (token != NULL) {
+                ls(token); // Call ls function with the directory path
+                break;
             } else {
-                // Parent process
-                waitpid(pid, NULL, 0); // Wait for child process to finish
+                // If no directory path is provided, list the contents of the current directory
+                ls("."); // Or any default directory you prefer
             }
-            break;  // Exit while loop
         } else {
             printf("Command not found: %s\n", command);
-            break; // Exit while loop
         }
     }
 }
 
-
 int main() {
+
     while(1){
         char input[200];
-        prompt2();
+        prompt();
         fgets(input, sizeof(input), stdin);
-        handleOutputRedirection2(input);
-        parseInput2(input);
+        handleOutputRedirection(input);
+        // Fork to execute command
+        pid_t pid = fork();
+        if (pid == 0) {
+            // Child process
+            parseInput(input);
+            exit(EXIT_SUCCESS); // Exit child process
+        } else if (pid < 0) {
+            // Fork failed
+            perror("fork");
+        } else {
+            // Parent process
+            waitpid(pid, NULL, 0); // Wait for child process to finish
+        }
+
         fflush(stdout);
     }
     return 0;

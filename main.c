@@ -6,7 +6,7 @@
 #include <time.h>
 #include <stdint.h>
 #include <windows.h>
-
+/*
 void handleOutputRedirection(char *input) {
     char *redirect_symbol = strchr(input, '>');
     if (redirect_symbol != NULL) {
@@ -348,4 +348,4 @@ int main2() {
 
     return 0;
 }
-
+*/
