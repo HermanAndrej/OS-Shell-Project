@@ -33,6 +33,28 @@ void handleOutputRedirection2(char *input) {
     }
 }
 
+void help() {
+    printf("Available commands and their purposes:\n");
+    printf("1. wc - Count lines, words, and characters in a file.\n");
+    printf("   Usage: wc [-l] [-w] [-c] <filename>\n");
+    printf("2. grep - Search for a pattern in a file.\n");
+    printf("   Usage: grep <pattern> <filename>\n");
+    printf("3. cmatrix - Display a scrolling 'Matrix' like effect.\n");
+    printf("   Usage: cmatrix\n");
+    printf("4. df - Display disk space usage.\n");
+    printf("   Usage: df\n");
+    printf("5. tiger - Display ASCII art of a tiger.\n");
+    printf("   Usage: tiger\n");
+    printf("6. pokemon - Display ASCII art of a Pokemon.\n");
+    printf("   Usage: pokemon\n");
+    printf("7. thirsty - Display ASCII art of a drink.\n");
+    printf("   Usage: thirsty\n");
+    printf("8. pwgen - Generate a random password of specified length.\n");
+    printf("   Usage: pwgen <length>\n");
+    printf("9. help - Display usage and purpose of each command.\n");
+    printf("   Usage: help\n");
+}
+
 void prompt2() {
     char hostname[256];
     char *username;
@@ -283,86 +305,6 @@ void pwgen2(int length) {
     printf("\n");
 }
 
-/* void parseInput2(char *input) {
-    // Tokenization
-    char *token = strtok(input, " \n"); // Break input into tokens separated by space or newline
-
-    // First token is the command
-    char *command = token;
-
-    // Subsequent tokens are arguments
-    while (token != NULL) {
-        token = strtok(NULL, " \n"); // Get next token
-
-        if (strcmp(command, "wc") == 0) {
-            // Parse options and filename for wc command
-            int countLines = 0;
-            int countWords = 0;
-            int countChars = 0;
-            char *fileName = NULL;
-
-            while (token != NULL) {
-                if (strcmp(token, "-l") == 0) {
-                    countLines = 1;
-                } else if (strcmp(token, "-w") == 0) {
-                    countWords = 1;
-                } else if (strcmp(token, "-c") == 0) {
-                    countChars = 1;
-                } else {
-                    // Assume this token is the filename
-                    fileName = token;
-                    break;
-                }
-                token = strtok(NULL, " \n"); // Move to the next token
-            }
-
-            if (fileName != NULL) {
-                // Call wc function with parsed arguments
-                wc2(fileName, countLines, countWords, countChars);
-                break;  // to avoid redundant else print function
-            } else {
-                printf("Usage: wc [-l] [-w] [-c] <filename>\n");
-            }
-        } else if (strcmp(command, "grep") == 0) {
-            char *pattern = token;
-            token = strtok(NULL, " \n");
-            if (token != NULL) {
-                char *fileName = token;
-                grep2(pattern, fileName);
-                break;  // to avoid redundant else print function
-            } else {
-                printf("Usage: grep <pattern> <filename>\n");
-            }
-        } else if (strcmp(command, "cmatrix") == 0){
-            cmatrix2();
-        } else if (strcmp(command, "df") == 0){  // df implementation
-            df2("/");
-        } else if (strcmp(command, "tiger") == 0){ // tiger implementation
-            tiger2();
-        } else if (strcmp(command, "pokemon") == 0){  // pokemon implementation
-            pokemon2();
-        } else if (strcmp(command, "thirsty") == 0){  // thirsty implementation
-            thirsty2();
-        } else if (strcmp(command, "pwgen") == 0){  // password generator implementation
-            int length;
-            if(token != NULL){
-                if(atoi(token)){
-                    length = atoi(token);
-                    pwgen2(length);
-                    break;  // to avoid redundant else print function
-                } else{
-                    printf("You have to enter a integer as a password length!\n");
-                }
-            } else {
-                printf("Usage: pwgen <length>\n");
-            }
-        } else {
-            printf("Command not found: %s\n", command);
-        }
-    }
-}
- */
-
 void parseInput2(char *input) {
     // Tokenization
     char *token = strtok(input, " \n"); // Break input into tokens separated by space or newline
@@ -536,6 +478,21 @@ void parseInput2(char *input) {
             } else {
                 printf("Usage: pwgen <length>\n");
             }
+        } else if (strcmp(command, "help") == 0) {
+            // Fork to execute thirsty command
+            pid_t pid = fork();
+            if (pid == 0) {
+                // Child process
+                help();
+                exit(EXIT_SUCCESS); // Exit child process
+            } else if (pid < 0) {
+                // Fork failed
+                perror("fork");
+            } else {
+                // Parent process
+                waitpid(pid, NULL, 0); // Wait for child process to finish
+            }
+            break;  // Exit while loop
         } else {
             printf("Command not found: %s\n", command);
             break; // Exit while loop
