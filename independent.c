@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <dirent.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
+
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -20,10 +22,8 @@
 void handleOutputRedirection(char *input) {
     char *redirect_symbol = strchr(input, '>');
     if (redirect_symbol != NULL) {
-        // Extract the filename for redirection
-        *redirect_symbol = '\0'; // Replace '>' with NULL character
-        char *filename = redirect_symbol + 1; // Filename starts right after '>'
-        // Trim leading and trailing spaces from filename
+        *redirect_symbol = '\0';
+        char *filename = redirect_symbol + 1;
         while (isspace(*filename)) {
             filename++;
         }
@@ -31,9 +31,6 @@ void handleOutputRedirection(char *input) {
         while (len > 0 && isspace(filename[len - 1])) {
             filename[--len] = '\0';
         }
-
-
-        // Redirect output to the specified file
         freopen(filename, "w", stdout);
         fflush(stdout);
     }
@@ -42,56 +39,73 @@ void handleOutputRedirection(char *input) {
 void help() {
     printf("Available commands and their purposes:\n");
     printf("1. wc - Count lines, words, and characters in a file.\n");
-    printf("   Usage: wc [-l] [-w] [-c] <filename>\n");
+    printf("	Usage: wc [-l] [-w] [-c] <filename>\n");
     printf("2. grep - Search for a pattern in a file.\n");
-    printf("   Usage: grep <pattern> <filename>\n");
+    printf("	Usage: grep <pattern> <filename>\n");
     printf("3. cmatrix - Display a scrolling 'Matrix' like effect.\n");
-    printf("   Usage: cmatrix\n");
+    printf("	Usage: cmatrix\n");
     printf("4. df - Display disk space usage.\n");
-    printf("   Usage: df\n");
-    printf("5. tiger - Display ASCII art of a tiger.\n");
-    printf("   Usage: tiger\n");
-    printf("6. pokemon - Display ASCII art of a Pokemon.\n");
-    printf("   Usage: pokemon\n");
-    printf("7. thirsty - Display ASCII art of a drink.\n");
-    printf("   Usage: thirsty\n");
-    printf("8. pwgen - Generate a random password of specified length.\n");
-    printf("   Usage: pwgen <length>\n");
-    printf("9. help - Display usage and purpose of each command.\n");
-    printf("   Usage: help\n");
+    printf("	Usage: df\n");
+    printf("5. cat - Display contents of a file.\n");
+    printf("	Usage: cat <filename>\n");
+    printf("6. ls - List files and directories in a directory.\n");
+    printf("	Usage: ls [directory]\n");
+    printf("7. mkdir - Create a new directory.\n");
+    printf("	Usage: mkdir <directory_name>\n");
+    printf("8. tiger - Display ASCII art of a tiger.\n");
+    printf("	Usage: tiger\n");
+    printf("9. pokemon - Display ASCII art of a Pokemon.\n");
+    printf("	Usage: pokemon\n");
+    printf("10. thirsty - Display ASCII art of a drink.\n");
+    printf("	Usage: thirsty\n");
+    printf("11. pwgen - Generate a random password of specified length.\n");
+    printf("	Usage: pwgen <length>\n");
+    printf("12. help - Display usage and purpose of each command.\n");
+    printf("    Usage: help\n");
 }
 
 void prompt() {
     char hostname[256];
     char *username;
-
     printf(ANSI_COLOR_RED);
-
-    // Get the machine name
     gethostname(hostname, sizeof(hostname));
-
-    // Get the username
     username = getlogin();
-
-    // Print the prompt
     printf("%s@%s:~$ ", username, hostname);
+}
+
+void cat(char* filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error: Unable to read file: %s\n", filename);
+        return;
+    }
+    char line[256];
+    while (fgets(line, sizeof(line), file)) {
+        printf("%s", line);
+    }
+    fclose(file);
+}
+
+void mkdir_wrapper(char* dirname) {
+    if (mkdir(dirname, 0777) == 0) {
+        printf("Directory '%s' created successfully.\n", dirname);
+    } else {
+        printf("Error: Unable to create directory '%s'\n", dirname);
+    }
 }
 
 void ls(const char *path) {
     DIR *dir;
     struct dirent *entry;
-
     dir = opendir(path);
     if (dir == NULL) {
         fprintf(stderr, "ls: cannot open directory '%s'\n", path);
         return;
     }
-
     printf("Listing of directory: %s\n", path);
     while ((entry = readdir(dir)) != NULL) {
         printf("%s\n", entry->d_name);
     }
-
     closedir(dir);
 }
 
@@ -101,14 +115,12 @@ void tiger() {
             "       _ __..-;''`--/'/ /.',-`-.",
             "   (`/' ` |  \\ \\ \\ \\ / / / / .-'/`,_",
             "  /'`\\ \\   |  \\ | \\| // // / -.,/_,'-,",
-            " /<7' ;  \\ \\  | ; ||/ /| | \\/    |`-/,/-.,_,/')",
-            "/  _.-, `,-\\,__|  _-| / \\ \\/|_/  |    '-/.;.'\\'",
+            "/  _.-, `,-\\,__|  _-| / \\ \\/    |`-/,/-.,_,/')",
             "`-`  f/ ;      / __/ \\__ `/ |__/ |",
             "     `-'      |  -| =|\\_  \\  |-' |",
             "           __/   /_..-' `  ),'  //",
             "       fL ((__.-'((___..-'' \\__.'"
     };
-
     for (int i = 0; i < 10; ++i) {
         printf("%s\n", asciiArt[i]);
     }
@@ -189,28 +201,22 @@ void thirsty() {
 }
 
 void df(const char *drive) {
-
 #ifdef __unix__
     char command[100];
     snprintf(command, sizeof(command), "df -h %s", drive);
-
     FILE *pipe = popen(command, "r");
     if (pipe == NULL) {
         printf("Error executing df command\n");
         return;
     }
-
     char output[512];
     while (fgets(output, sizeof(output), pipe) != NULL) {
         printf("%s", output);
     }
-
     pclose(pipe);
 #else
-    // For Windows
     ULARGE_INTEGER total_bytes;
     ULARGE_INTEGER free_bytes;
-
     if (GetDiskFreeSpaceEx(drive, NULL, &total_bytes, &free_bytes)) {
         printf("Drive %s:\n", drive);
         printf("Total space: %llu bytes\n", total_bytes.QuadPart);
@@ -225,51 +231,40 @@ void df(const char *drive) {
 
 void cmatrix() {
     while (1) {
-        // Clear screen
         printf("\033[2J");
-
-        // Seed the random number generator with current time
         srand(time(NULL));
-
-        // Generate matrix-like output
         for (int i = 0; i < 25; i++) {
             for (int j = 0; j < 200; j++) {
-                if (rand() % 20 == 0) // Randomly print characters
-                    printf("%c", rand() % 94 + 33); // No color
+                if (rand() % 20 == 0)
+                    printf("%c", rand() % 94 + 33);
                 else
-                    printf(" "); // Empty space
+                    printf(" ");
             }
             printf("\n");
         }
-
         fflush(stdout);
-        usleep(50000); // Wait for 50 milliseconds before updating again
+        usleep(50000);
     }
 }
 
-void wc(char* fileName, int countLines, int countWords, int countChars){
+void wc(char* fileName, int countLines, int countWords, int countChars) {
     int lineCount = 0;
     int wordCount = 0;
     int characterCount = 0;
     char c;
     int inWord = 0;
-
     FILE *file = fopen(fileName, "r");
-
-    if(file == NULL){
+    if (file == NULL) {
         printf("Error: Unable to read file!\n");
         return;
     }
-
-    while((c = fgetc(file)) != EOF){
+    while ((c = fgetc(file)) != EOF) {
         characterCount++;
-
-        if(c == '\n'){
+        if (c == '\n') {
             lineCount++;
         }
-
-        if(isspace(c)){
-            if(inWord){
+        if (isspace(c)) {
+            if (inWord) {
                 wordCount++;
                 inWord = 0;
             }
@@ -277,13 +272,10 @@ void wc(char* fileName, int countLines, int countWords, int countChars){
             inWord = 1;
         }
     }
-
     if (inWord) {
-        wordCount++; // Count the last word if the file doesn't end with whitespace
+        wordCount++;
     }
-
     fclose(file);
-
     if (countLines) {
         printf("Lines: %d\n", lineCount);
     }
@@ -296,7 +288,6 @@ void wc(char* fileName, int countLines, int countWords, int countChars){
 }
 
 void grep(char* pattern, char* fileName) {
-    // Implement grep command logic here
     printf("Executing grep command for pattern: %s in file: %s\n", pattern, fileName);
     FILE *file = fopen(fileName, "r");
     if (file == NULL) {
@@ -313,16 +304,9 @@ void grep(char* pattern, char* fileName) {
 }
 
 void pwgen(int length) {
-    // Define character set for password generation
     char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-
-    // Calculate the size of the character set
     int charset_size = sizeof(charset) - 1;
-
-    // Seed the random number generator
     srand((unsigned int)time(NULL));
-
-    // Generate and print the password
     printf("Generated Password: ");
     for (int i = 0; i < length; ++i) {
         int index = rand() % charset_size;
@@ -332,23 +316,15 @@ void pwgen(int length) {
 }
 
 void parseInput(char *input) {
-    // Tokenization
-    char *token = strtok(input, " \n"); // Break input into tokens separated by space or newline
-
-    // First token is the command
+    char *token = strtok(input, " \n");
     char *command = token;
-
-    // Subsequent tokens are arguments
     while (token != NULL) {
-        token = strtok(NULL, " \n"); // Get next token
-
+        token = strtok(NULL, " \n");
         if (strcmp(command, "wc") == 0) {
-            // Parse options and filename for wc command
             int countLines = 0;
             int countWords = 0;
             int countChars = 0;
             char *fileName = NULL;
-
             while (token != NULL) {
                 if (strcmp(token, "-l") == 0) {
                     countLines = 1;
@@ -357,17 +333,14 @@ void parseInput(char *input) {
                 } else if (strcmp(token, "-c") == 0) {
                     countChars = 1;
                 } else {
-                    // Assume this token is the filename
                     fileName = token;
                     break;
                 }
-                token = strtok(NULL, " \n"); // Move to the next token
+                token = strtok(NULL, " \n");
             }
-
             if (fileName != NULL) {
-                // Call wc function with parsed arguments
                 wc(fileName, countLines, countWords, countChars);
-                break;  // to avoid redundant else print function
+                break;
             } else {
                 printf("Usage: wc [-l] [-w] [-c] <filename>\n");
             }
@@ -377,43 +350,55 @@ void parseInput(char *input) {
             if (token != NULL) {
                 char *fileName = token;
                 grep(pattern, fileName);
-                break;  // to avoid redundant else print function
+                break;
             } else {
                 printf("Usage: grep <pattern> <filename>\n");
             }
-        } else if (strcmp(command, "cmatrix") == 0){
+        } else if (strcmp(command, "cmatrix") == 0) {
             cmatrix();
-        } else if (strcmp(command, "df") == 0){
+        } else if (strcmp(command, "df") == 0) {
             df("/");
-        } else if (strcmp(command, "tiger") == 0){
+        } else if (strcmp(command, "tiger") == 0) {
             tiger();
-        } else if (strcmp(command, "pokemon") == 0){
+        } else if (strcmp(command, "pokemon") == 0) {
             pokemon();
-        } else if (strcmp(command, "thirsty") == 0){
+        } else if (strcmp(command, "thirsty") == 0) {
             thirsty();
-        } else if (strcmp(command, "pwgen") == 0){
+        } else if (strcmp(command, "pwgen") == 0) {
             int length;
-            if(token != NULL){
-                if(atoi(token)){
+            if (token != NULL) {
+                if (atoi(token)) {
                     length = atoi(token);
                     pwgen(length);
-                    break;  // to avoid redundant else print function
-                } else{
+                    break;
+                } else {
                     printf("You have to enter a integer as a password length!\n");
                 }
             } else {
                 printf("Usage: pwgen <length>\n");
             }
-        } else if (strcmp(command, "help") == 0){
+        } else if (strcmp(command, "help") == 0) {
             help();
-        } else if (strcmp(command, "ls") == 0) {
-            // If the command is "ls", pass the token (directory path) to the ls function
+        } else if (strcmp(command, "mkdir") == 0) {
             if (token != NULL) {
-                ls(token); // Call ls function with the directory path
+                mkdir_wrapper(token);
                 break;
             } else {
-                // If no directory path is provided, list the contents of the current directory
-                ls("."); // Or any default directory you prefer
+                mkdir_wrapper(".");
+            }
+        } else if (strcmp(command, "cat") == 0) {
+            if (token != NULL) {
+                cat(token);
+                break;
+            } else {
+                cat(".");
+            }
+        } else if (strcmp(command, "ls") == 0) {
+            if (token != NULL) {
+                ls(token);
+                break;
+            } else {
+                ls(".");
             }
         } else {
             printf("Command not found: %s\n", command);
@@ -422,28 +407,25 @@ void parseInput(char *input) {
 }
 
 int main() {
-
-    while(1){
+    while(1) {
         char input[200];
         prompt();
         fgets(input, sizeof(input), stdin);
         handleOutputRedirection(input);
-        // Fork to execute command
         pid_t pid = fork();
         if (pid == 0) {
-            // Child process
             parseInput(input);
-            exit(EXIT_SUCCESS); // Exit child process
+            exit(EXIT_SUCCESS);
         } else if (pid < 0) {
-            // Fork failed
             perror("fork");
         } else {
-            // Parent process
-            waitpid(pid, NULL, 0); // Wait for child process to finish
+            waitpid(pid, NULL, 0);
         }
-
         fflush(stdout);
     }
     return 0;
 }
+
+
+
 
