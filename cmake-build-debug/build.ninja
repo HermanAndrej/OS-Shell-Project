@@ -49,14 +49,14 @@ cmake_ninja_workdir = C$:/Users/andre/CLionProjects/OS-Shell-Project/cmake-build
 
 build cmake_object_order_depends_target_untitled: phony || CMakeFiles/untitled.dir
 
-build CMakeFiles/untitled.dir/main.c.obj: C_COMPILER__untitled_unscanned_Debug C$:/Users/andre/CLionProjects/OS-Shell-Project/main.c || cmake_object_order_depends_target_untitled
-  DEP_FILE = CMakeFiles\untitled.dir\main.c.obj.d
+build CMakeFiles/untitled.dir/windows_version/main.c.obj: C_COMPILER__untitled_unscanned_Debug C$:/Users/andre/CLionProjects/OS-Shell-Project/windows_version/main.c || cmake_object_order_depends_target_untitled
+  DEP_FILE = CMakeFiles\untitled.dir\windows_version\main.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\untitled.dir
-  OBJECT_FILE_DIR = CMakeFiles\untitled.dir
+  OBJECT_FILE_DIR = CMakeFiles\untitled.dir\windows_version
 
-build CMakeFiles/untitled.dir/independent.c.obj: C_COMPILER__untitled_unscanned_Debug C$:/Users/andre/CLionProjects/OS-Shell-Project/independent.c || cmake_object_order_depends_target_untitled
-  DEP_FILE = CMakeFiles\untitled.dir\independent.c.obj.d
+build CMakeFiles/untitled.dir/shell.c.obj: C_COMPILER__untitled_unscanned_Debug C$:/Users/andre/CLionProjects/OS-Shell-Project/shell.c || cmake_object_order_depends_target_untitled
+  DEP_FILE = CMakeFiles\untitled.dir\shell.c.obj.d
   FLAGS = -g -std=gnu11 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\untitled.dir
   OBJECT_FILE_DIR = CMakeFiles\untitled.dir
@@ -69,7 +69,7 @@ build CMakeFiles/untitled.dir/independent.c.obj: C_COMPILER__untitled_unscanned_
 #############################################
 # Link the executable untitled.exe
 
-build untitled.exe: C_EXECUTABLE_LINKER__untitled_Debug CMakeFiles/untitled.dir/main.c.obj CMakeFiles/untitled.dir/independent.c.obj
+build untitled.exe: C_EXECUTABLE_LINKER__untitled_Debug CMakeFiles/untitled.dir/windows_version/main.c.obj CMakeFiles/untitled.dir/shell.c.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\untitled.dir

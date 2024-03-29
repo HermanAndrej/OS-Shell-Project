@@ -2,5 +2,7 @@
 3	2370	7331007638849326	CMakeFiles/untitled.dir/main.c.obj	90461b31333bbf23
 813	912	7331009037937300	untitled.exe	c8c0e58429d0337f
 7	1907	7330892824349214	CMakeFiles/untitled.dir/independent.c.obj	b6874ce9eca6e06a
-2	370	7334222946724976	build.ninja	5a186430d91fb94a
+2	370	7334244565004616	build.ninja	5a186430d91fb94a
 3	812	7331009036985246	CMakeFiles/untitled.dir/independent/independent.c.obj	41ae69fb4eb1ecd4
+1	191	7334244565004616	build.ninja	5a186430d91fb94a
+1	946	7334244575535151	CMakeFiles/untitled.dir/windows_version/main.c.obj	a7d537bc6a812744

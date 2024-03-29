@@ -100,13 +100,13 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "main.c",
+			"path" : "windows_version/main.c",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "independent.c",
+			"path" : "shell.c",
 			"sourceGroupIndex" : 0
 		}
 	],
