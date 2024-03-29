@@ -20,7 +20,7 @@
 - Made additional implementation for Windows systems.
 
 ## Instructions for Compiling Programs/Scripts:
-1. Compile the `main.c` file using a C compiler.
+1. Compile the `shell.c` file using a C compiler.
    - Example (GCC): `gcc shell.c -o myshell`
 2. Run the compiled executable.
    - Example: `./myshell`
